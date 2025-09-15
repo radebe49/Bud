@@ -57,34 +57,6 @@ AI-powered personal health coach mobile application built with React Native and 
 - `npm run format` - Format code with Prettier
 - `npm run type-check` - Run TypeScript checks
 
-## Project Structure
-
-```
-src/
-├── features/           # Feature-based organization
-│   ├── auth/          # Authentication & onboarding
-│   ├── health/        # Health data integration
-│   ├── coaching/      # AI conversation & coaching
-│   ├── nutrition/     # Food tracking & insights
-│   ├── workouts/      # Exercise planning & tracking
-│   └── sleep/         # Sleep coaching & optimization
-├── shared/            # Shared utilities and components
-│   ├── components/    # Reusable UI components
-│   ├── services/      # API and storage services
-│   ├── types/         # Global TypeScript interfaces
-│   ├── utils/         # Helper functions and constants
-│   └── hooks/         # Custom React hooks
-├── navigation/        # App navigation configuration
-└── assets/           # Images, fonts, static resources
-```
-
-## Development Guidelines
-
-- Use TypeScript for all new code
-- Follow feature-based folder organization
-- Write tests for business logic and components
-- Use ESLint and Prettier for code formatting
-- Follow React Native performance best practices
 
 ## Health Data Integration
 
@@ -109,15 +81,7 @@ Powered by GPT models via GROQ API:
 - HIPAA compliance considerations
 - Granular privacy controls
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Run linting and tests
-6. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT Open Source License.
