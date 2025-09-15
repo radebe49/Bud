@@ -8,15 +8,58 @@
     "scheme": "budhealthcoach",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0,
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "url": "https://u.expo.dev/your-project-id"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.budhealthcoach.app",
+      "buildNumber": "1",
+      "deploymentTarget": "13.0",
+      "userInterfaceStyle": "automatic",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "This app needs access to your health data to provide personalized coaching and insights.",
+        "NSHealthUpdateUsageDescription": "This app needs to update your health data to track your progress and goals.",
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes for food logging.",
+        "NSFaceIDUsageDescription": "Use Face ID to securely access your health data.",
+        "NSMotionUsageDescription": "This app uses motion data to track your activity and workouts.",
+        "UIBackgroundModes": ["background-processing", "background-fetch"]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACTIVITY_RECOGNITION",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT"
+      ],
+      "package": "com.budhealthcoach.app",
+      "versionCode": 1,
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34,
+      "minSdkVersion": 21
     },
     "web": {
       "bundler": "metro",
@@ -25,6 +68,10 @@
     },
     "plugins": [
       "expo-router",
+      "expo-local-authentication",
+      "expo-camera",
+      "expo-notifications",
+      "expo-sensors",
       [
         "expo-splash-screen",
         {
@@ -33,10 +80,37 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    },
+    "owner": "your-expo-username",
+    "privacy": "public",
+    "primaryColor": "#007AFF",
+    "notification": {
+      "icon": "./assets/images/notification-icon.png",
+      "color": "#007AFF",
+      "androidMode": "default",
+      "androidCollapsedTitle": "#{unread_notifications} new interactions"
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "your-org",
+            "project": "bud-health-coach"
+          }
+        }
+      ]
     }
   }
 }
