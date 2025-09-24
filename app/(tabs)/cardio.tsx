@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, RefreshControl, Alert, View, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, ScrollView, RefreshControl, Alert, View, TouchableOpacity, Dimensions, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -11,6 +11,11 @@ import {
   WorkoutHistoryCard, 
   WorkoutProgress 
 } from '../../src/features/workouts';
+import { 
+  WorkoutTrackingScreen,
+  WorkoutPlanningScreen,
+  WorkoutAnalyticsScreen
+} from '../../src/features/workouts/screens';
 import { FixedHeader, ThreeRingProgress, Tag, MetricCard, ProgressRing } from '../../src/shared/components';
 import { HealthInsightCard } from '../../src/features/health/components';
 import { workoutService } from '../../src/features/workouts';
@@ -18,7 +23,8 @@ import { workoutUpdateNotifier } from '../../src/shared/services/workoutUpdateNo
 import type { 
   WorkoutRecommendation, 
   WorkoutSession, 
-  WorkoutStreak as WorkoutStreakType 
+  WorkoutStreak as WorkoutStreakType,
+  WorkoutPlan 
 } from '@/features/workouts/types/workoutTypes';
 
 const { width } = Dimensions.get('window');
@@ -29,6 +35,10 @@ export default function CardioScreen() {
   const [streak, setStreak] = useState<WorkoutStreakType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [showWorkoutTracking, setShowWorkoutTracking] = useState(false);
+  const [showWorkoutPlanning, setShowWorkoutPlanning] = useState(false);
+  const [showWorkoutAnalytics, setShowWorkoutAnalytics] = useState(false);
+  const [activeWorkoutId, setActiveWorkoutId] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -73,15 +83,52 @@ export default function CardioScreen() {
   };
 
   const handleWorkoutPress = async (workoutId: string) => {
-    try {
-      const session = await workoutService.startWorkout(workoutId);
-      Alert.alert(
-        'Workout Started!',
-        `Starting ${session.workoutName}. Good luck!`,
-        [{ text: 'OK' }]
-      );
-    } catch (error) {
-      Alert.alert('Error', 'Failed to start workout. Please try again.');
+    setActiveWorkoutId(workoutId);
+    setShowWorkoutTracking(true);
+  };
+
+  const handleWorkoutComplete = (session: WorkoutSession) => {
+    setShowWorkoutTracking(false);
+    setActiveWorkoutId(null);
+    loadData(); // Refresh data
+    Alert.alert(
+      'Workout Complete!',
+      `Great job! You burned ${session.caloriesBurned} calories in ${session.duration} minutes.`,
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleWorkoutCancel = () => {
+    setShowWorkoutTracking(false);
+    setActiveWorkoutId(null);
+  };
+
+  const handlePlanCreated = (plan: WorkoutPlan) => {
+    setShowWorkoutPlanning(false);
+    loadData(); // Refresh recommendations
+    Alert.alert(
+      'Plan Created!',
+      `Your personalized workout plan "${plan.name}" is ready!`,
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleQuickActionPress = (action: string) => {
+    switch (action) {
+      case 'start_run':
+        handleWorkoutPress('running');
+        break;
+      case 'hiit_session':
+        handleWorkoutPress('hiit-bodyweight');
+        break;
+      case 'zone2':
+        handleWorkoutPress('cycling');
+        break;
+      case 'recovery':
+        handleWorkoutPress('yoga-flow');
+        break;
+      default:
+        console.log('Unknown action:', action);
     }
   };
 
@@ -222,7 +269,10 @@ export default function CardioScreen() {
       <ThemedText style={styles.sectionTitle}>Quick Start</ThemedText>
       
       <View style={styles.quickActionsGrid}>
-        <TouchableOpacity style={styles.quickActionCard}>
+        <TouchableOpacity 
+          style={styles.quickActionCard}
+          onPress={() => handleQuickActionPress('start_run')}
+        >
           <LinearGradient
             colors={['#4F46E5', '#7C3AED']}
             style={styles.quickActionContent}
@@ -237,7 +287,10 @@ export default function CardioScreen() {
           </LinearGradient>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.quickActionCard}>
+        <TouchableOpacity 
+          style={styles.quickActionCard}
+          onPress={() => handleQuickActionPress('hiit_session')}
+        >
           <LinearGradient
             colors={['#EF4444', '#F97316']}
             style={styles.quickActionContent}
@@ -252,7 +305,10 @@ export default function CardioScreen() {
           </LinearGradient>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.quickActionCard}>
+        <TouchableOpacity 
+          style={styles.quickActionCard}
+          onPress={() => handleQuickActionPress('zone2')}
+        >
           <LinearGradient
             colors={['#10B981', '#059669']}
             style={styles.quickActionContent}
@@ -267,7 +323,10 @@ export default function CardioScreen() {
           </LinearGradient>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.quickActionCard}>
+        <TouchableOpacity 
+          style={styles.quickActionCard}
+          onPress={() => handleQuickActionPress('recovery')}
+        >
           <LinearGradient
             colors={['#8B5CF6', '#A855F7']}
             style={styles.quickActionContent}
@@ -338,10 +397,45 @@ export default function CardioScreen() {
           />
         </View>
 
+        {/* Action Buttons */}
+        <View style={styles.sectionContainer}>
+          <View style={styles.actionButtonsContainer}>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => setShowWorkoutPlanning(true)}
+            >
+              <LinearGradient
+                colors={['#4F46E5', '#7C3AED']}
+                style={styles.actionButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <IconSymbol name="plus.circle.fill" size={20} color="#FFFFFF" />
+                <ThemedText style={styles.actionButtonText}>Create Plan</ThemedText>
+              </LinearGradient>
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => setShowWorkoutAnalytics(true)}
+            >
+              <LinearGradient
+                colors={['#10B981', '#059669']}
+                style={styles.actionButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <IconSymbol name="chart.bar.fill" size={20} color="#FFFFFF" />
+                <ThemedText style={styles.actionButtonText}>Analytics</ThemedText>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+
         <View style={styles.sectionContainer}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Recommended Workouts</ThemedText>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowWorkoutPlanning(true)}>
               <IconSymbol name="chevron.right" size={16} color="#007AFF" />
             </TouchableOpacity>
           </View>
@@ -391,6 +485,48 @@ export default function CardioScreen() {
         
         <View style={styles.bottomSpacing} />
       </ScrollView>
+
+      {/* Workout Tracking Modal */}
+      {showWorkoutTracking && activeWorkoutId && (
+        <Modal
+          visible={showWorkoutTracking}
+          animationType="slide"
+          presentationStyle="fullScreen"
+        >
+          <WorkoutTrackingScreen
+            workoutId={activeWorkoutId}
+            onComplete={handleWorkoutComplete}
+            onCancel={handleWorkoutCancel}
+          />
+        </Modal>
+      )}
+
+      {/* Workout Planning Modal */}
+      {showWorkoutPlanning && (
+        <Modal
+          visible={showWorkoutPlanning}
+          animationType="slide"
+          presentationStyle="pageSheet"
+        >
+          <WorkoutPlanningScreen
+            onPlanCreated={handlePlanCreated}
+            onCancel={() => setShowWorkoutPlanning(false)}
+          />
+        </Modal>
+      )}
+
+      {/* Workout Analytics Modal */}
+      {showWorkoutAnalytics && (
+        <Modal
+          visible={showWorkoutAnalytics}
+          animationType="slide"
+          presentationStyle="pageSheet"
+        >
+          <WorkoutAnalyticsScreen
+            onClose={() => setShowWorkoutAnalytics(false)}
+          />
+        </Modal>
+      )}
     </SafeAreaView>
   );
 }
@@ -602,6 +738,34 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     textAlign: 'center',
     lineHeight: 20,
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 8,
+  },
+  actionButton: {
+    flex: 1,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  actionButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 16,
+    gap: 8,
+  },
+  actionButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
   bottomSpacing: {
     height: 100,

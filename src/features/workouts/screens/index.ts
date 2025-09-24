@@ -1,3 +1,3 @@
-// Workout screens will be exported here
-// export { WorkoutScreen } from './WorkoutScreen';
-// export { ExerciseTrackingScreen } from './ExerciseTrackingScreen';
+export { WorkoutTrackingScreen } from './WorkoutTrackingScreen';
+export { WorkoutPlanningScreen } from './WorkoutPlanningScreen';
+export { WorkoutAnalyticsScreen } from './WorkoutAnalyticsScreen';
