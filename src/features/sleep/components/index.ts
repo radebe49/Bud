@@ -1,4 +1,4 @@
-// Sleep components will be exported here
-// export { SleepChart } from './SleepChart';
-// export { BedtimeRoutine } from './BedtimeRoutine';
-// export { SleepInsights } from './SleepInsights';
+// Sleep components exports
+export { SleepCoachingCard } from './SleepCoachingCard';
+export { WindDownRoutine } from './WindDownRoutine';
+export { SleepInsightsCard } from './SleepInsightsCard';

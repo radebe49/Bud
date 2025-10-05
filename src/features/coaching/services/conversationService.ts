@@ -5,6 +5,7 @@ import { ConversationEngine } from './conversationEngine';
 import { QuickActionGenerator } from './quickActionGenerator';
 import { MockResponseDatabase } from './mockResponseDatabase';
 import { workoutUpdateNotifier } from '@/shared/services/workoutUpdateNotifier';
+import { GroqService } from './groqService';
 
 export interface DataLoggingResult {
   success: boolean;
@@ -18,11 +19,13 @@ export class ConversationService {
   private conversationEngine: ConversationEngine;
   private quickActionGenerator: QuickActionGenerator;
   private mockDb: MockResponseDatabase;
+  private groqService: GroqService;
 
   private constructor() {
     this.conversationEngine = ConversationEngine.getInstance();
     this.quickActionGenerator = QuickActionGenerator.getInstance();
     this.mockDb = MockResponseDatabase.getInstance();
+    this.groqService = GroqService.getInstance();
   }
 
   public static getInstance(): ConversationService {
@@ -39,7 +42,34 @@ export class ConversationService {
     context: ConversationContext
   ): Promise<{ response: ChatMessage; dataLogged?: DataLoggingResult }> {
     try {
-      // Use the enhanced conversation engine
+      // Try GROQ service first if configured
+      if (this.groqService.getConfig().enableCaching && this.groqService.getServiceStats().groq.configured) {
+        try {
+          const groqResult = await this.groqService.processMessage(
+            message,
+            context.userId,
+            context.sessionId
+          );
+
+          // Convert GROQ response to expected format
+          const dataLogged: DataLoggingResult = {
+            success: false, // GROQ doesn't handle data logging directly
+            dataLogged: [],
+            followUpQuestions: this.extractFollowUpQuestions(groqResult.response),
+            suggestions: groqResult.response.suggestions || []
+          };
+
+          return {
+            response: groqResult.response,
+            dataLogged: dataLogged.success ? dataLogged : undefined
+          };
+        } catch (groqError) {
+          console.warn('GROQ service failed, falling back to conversation engine:', groqError);
+          // Continue to fallback below
+        }
+      }
+
+      // Fallback to existing conversation engine
       const result = await this.conversationEngine.processMessage(
         message,
         context.userId,

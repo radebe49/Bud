@@ -1,0 +1,1 @@
+export { nutritionService } from './nutritionService';

@@ -111,6 +111,21 @@ export default function TabLayout() {
           }}
         />
         
+        {/* Nutrition Tab */}
+        <Tabs.Screen
+          name="nutrition"
+          options={{
+            title: 'Nutrition',
+            tabBarIcon: ({ color }) => (
+              <IconSymbol 
+                size={26} 
+                name="fork.knife" 
+                color={color} 
+              />
+            ),
+          }}
+        />
+        
         {/* Hide AskBud from tab bar - will be accessed via floating button */}
         <Tabs.Screen
           name="askbud"

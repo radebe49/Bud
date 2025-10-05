@@ -34,3 +34,21 @@ export type {
   OutcomeType,
   AIResponse
 } from './conversationTypes';
+
+// Proactive Coaching Intelligence Types
+export type {
+  UserBehaviorPattern,
+  PatternTrigger,
+  PatternOutcome,
+  ProactiveNotification,
+  HealthMetricChange,
+  CoachingAction,
+  HabitMilestone,
+  ContextualTrigger,
+  TriggerCondition,
+  CoachingIntervention,
+  InterventionTiming,
+  SmartTimingPreferences,
+  TimeWindow,
+  CoachingIntelligenceConfig
+} from './proactiveCoachingTypes';

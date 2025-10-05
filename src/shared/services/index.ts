@@ -16,3 +16,17 @@ export { supabase } from './supabaseClient';
 export { apiService } from './apiService';
 export { mockHealthDataService } from './mockHealthDataService';
 export { workoutUpdateNotifier } from './workoutUpdateNotifier';
+
+// Health data integration services
+export { healthDataIntegration, HealthDataIntegrationService } from './healthDataIntegration';
+export type { HealthDataProvider, SyncQueueItem as HealthSyncQueueItem } from './healthDataIntegration';
+
+export { HealthKitProvider } from './healthKitProvider';
+export { GoogleFitProvider } from './googleFitProvider';
+export { FitbitProvider, OuraProvider, MyFitnessPalProvider } from './thirdPartyProviders';
+
+export { offlineHealthStorage, OfflineHealthStorage } from './offlineHealthStorage';
+export type { OfflineHealthData, SyncStatus as OfflineSyncStatus } from './offlineHealthStorage';
+
+export { healthDataService, HealthDataService } from './healthDataService';
+export type { HealthDataServiceConfig, HealthDataSyncResult } from './healthDataService';

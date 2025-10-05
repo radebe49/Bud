@@ -49,24 +49,39 @@ export type MetricType =
     | 'heart_rate'
     | 'heart_rate_variability'
     | 'sleep_score'
+    | 'sleep_duration'
+    | 'deep_sleep'
     | 'recovery_score'
+    | 'readiness_score'
+    | 'activity_score'
     | 'stress_level'
     | 'activity_level'
+    | 'steps'
+    | 'distance'
     | 'calories_consumed'
     | 'calories_burned'
     | 'water_intake'
     | 'weight'
     | 'body_fat_percentage'
-    | 'muscle_mass';
+    | 'muscle_mass'
+    | 'protein'
+    | 'carbohydrates'
+    | 'fat'
+    | 'fiber'
+    | 'sugar';
 
 export type DataSource =
-    | 'apple_health'
+    | 'healthkit'
     | 'google_fit'
     | 'fitbit'
     | 'oura'
     | 'garmin'
+    | 'myfitnesspal'
+    | 'cronometer'
     | 'manual_entry'
-    | 'app_calculation';
+    | 'app_calculation'
+    | 'mixed'
+    | 'unknown';
 
 export interface DailyHealthSummary {
     date: Date;
